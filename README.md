@@ -259,7 +259,7 @@
 <div class="popup" id="popupBox">
     <p>✨ 9999 ROBUX ✨</p>
     <p>✅ Đã vào tài khoản: <span id="displayUser" style="color:#ffaa33;">???</span></p>
-    <p style="font-size:14px; color:#aaa;">(Trang web ảo - hiệu ứng neon)</p>
+    <p style="font-size:14px; color:#aaa;"</p>
     <button class="close-btn" id="closePopup">Đóng</button>
 </div>
 
