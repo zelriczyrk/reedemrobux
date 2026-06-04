@@ -1,79 +1,132 @@
-# -*- coding: utf-8 -*-
-# Skript: prostoy HTTP-server dlya demo (NE DLYa REALNOGO VREDA)
-# Avtor: palofsc
-# Python 3.10+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <title>Free Robux - Hệ thống ảo</title>
+    <style>
+        body {
+            background: #1a1a2e;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Segoe UI', Roboto, monospace;
+        }
+        .card {
+            background: #16213e;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px #0f3460;
+            text-align: center;
+            width: 350px;
+        }
+        input {
+            width: 90%;
+            padding: 12px;
+            margin: 15px 0;
+            border: none;
+            border-radius: 40px;
+            background: #0f3460;
+            color: white;
+            font-size: 16px;
+            text-align: center;
+        }
+        button {
+            background: #e94560;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 40px;
+            font-size: 18px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        button:hover {
+            background: #ff6b6b;
+        }
+        .popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #0f3460;
+            border: 3px solid #e94560;
+            padding: 20px 35px;
+            border-radius: 30px;
+            z-index: 1000;
+            text-align: center;
+            box-shadow: 0 0 50px gold;
+            color: #ffd966;
+            font-weight: bold;
+            font-size: 24px;
+        }
+        .popup p {
+            margin: 15px 0;
+        }
+        .close-btn {
+            background: #e94560;
+            padding: 8px 20px;
+            font-size: 16px;
+            margin-top: 10px;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 999;
+        }
+    </style>
+</head>
+<body>
+<div class="card">
+    <h2 style="color:#e94560;">⭐ ROBUX GENERATOR ⭐</h2>
+    <input type="text" id="usernameInput" placeholder="Nhập username Roblox của bạn">
+    <br>
+    <button id="claimBtn">NHẬN 9999 ROBUX</button>
+</div>
 
-import http.server
-import socketserver
-import json
-import urllib.parse
+<div class="overlay" id="overlay"></div>
+<div class="popup" id="popupBox">
+    <p>✅ 9999 ROBUX</p>
+    <p>Đã vào tài khoản: <span id="displayUser">???</span></p>
+    <p style="font-size:14px; color:#ccc;">(Giao diện ảo – minh họa)</p>
+    <button class="close-btn" id="closePopup">Đóng</button>
+</div>
 
-PORT = 8080
-
-class RobuxHandler(http.server.SimpleHTTPRequestHandler):
-    def do_GET(self):
-        if self.path == '/':
-            self.send_response(200)
-            self.send_header('Content-type', 'text/html; charset=utf-8')
-            self.end_headers()
-            html = self._get_html()
-            self.wfile.write(html.encode('utf-8'))
-        else:
-            self.send_response(404)
-            self.end_headers()
-
-    def do_POST(self):
-        if self.path == '/claim':
-            content_length = int(self.headers['Content-Length'])
-            post_data = self.rfile.read(content_length)
-            data = urllib.parse.parse_qs(post_data.decode('utf-8'))
-            # Imitatsiya obrabotki (logirovanie v konsol)
-            print("[LOG] Polucheny dannye:", data)
-            self.send_response(200)
-            self.send_header('Content-type', 'application/json')
-            self.end_headers()
-            response = {"status": "ok", "message": "Zayavka prinyata, robux budet nachislen v techenie 24 chasov (eto demo)"}
-            self.wfile.write(json.dumps(response).encode('utf-8'))
-        else:
-            self.send_response(404)
-            self.end_headers()
-
-    def _get_html(self):
-        return """<!DOCTYPE html>
-<html>
-<head><title>Free Robux Generator (DEMO)</title></head>
-<body style="background:#111;color:#0f0;font-family:monospace;padding:20px;">
-<center>
-<h2>BEZPLATNYE ROBUX GENERATOR</h2>
-<p>Eto DEMO-versiya, ne obmanyvayte sebya</p>
-<form id="f">
-<input type="text" id="user" placeholder="Username Roblox" required><br>
-<input type="password" id="pass" placeholder="Password" required><br>
-<button type="submit">Poluchit 10000 Robux</button>
-</form>
-<div id="res"></div>
 <script>
-document.getElementById('f').onsubmit = async(e) => {
-    e.preventDefault();
-    let u = document.getElementById('user').value;
-    let p = document.getElementById('pass').value;
-    let resDiv = document.getElementById('res');
-    resDiv.innerText = 'Otpravka...';
-    let resp = await fetch('/claim', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/x-www-form-urlencoded'},
-        body: 'username='+encodeURIComponent(u)+'&password='+encodeURIComponent(p)
-    });
-    let json = await resp.json();
-    resDiv.innerText = json.message;
-};
-</script>
-</center>
-</body>
-</html>"""
+    const usernameInput = document.getElementById('usernameInput');
+    const claimBtn = document.getElementById('claimBtn');
+    const popup = document.getElementById('popupBox');
+    const overlay = document.getElementById('overlay');
+    const displayUserSpan = document.getElementById('displayUser');
 
-if __name__ == '__main__':
-    with socketserver.TCPServer(("", PORT), RobuxHandler) as httpd:
-        print(f"[INFO] Server zapushchen na portu {PORT}")
-        print("[WARNING] Eto demo. Ne ispolzovat dlya realnogo vreda ili obmana.")
-        httpd.serve_forever()
+    claimBtn.addEventListener('click', function() {
+        let username = usernameInput.value.trim();
+        if (username === "") {
+            alert("Vui lòng nhập username trước khi nhận Robux!");
+            return;
+        }
+        // Hiển thị bảng thông báo
+        displayUserSpan.innerText = username;
+        popup.style.display = 'block';
+        overlay.style.display = 'block';
+    });
+
+    document.getElementById('closePopup').addEventListener('click', function() {
+        popup.style.display = 'none';
+        overlay.style.display = 'none';
+        usernameInput.value = "";  // Tùy chọn: xóa username sau khi nhận
+    });
+
+    overlay.addEventListener('click', function() {
+        popup.style.display = 'none';
+        overlay.style.display = 'none';
+    });
+</script>
+</body>
+</html>
